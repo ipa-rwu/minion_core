@@ -1,20 +1,7 @@
 #ifndef MINION_CORE_CONFIG_H_
 #define MINION_CORE_CONFIG_H_
 
-#include <ros.h>
-#include <ros/time.h>
-#include <std_msgs/Bool.h>
-#include <std_msgs/Empty.h>
-#include <std_msgs/Int32.h>
-#include <sensor_msgs/Imu.h>
-#include <sensor_msgs/JointState.h>
-#include <sensor_msgs/BatteryState.h>
-#include <sensor_msgs/MagneticField.h>
-#include <geometry_msgs/Vector3.h>
-#include <geometry_msgs/Twist.h>
-#include <tf/tf.h>
-#include <tf/transform_broadcaster.h>
-#include <nav_msgs/Odometry.h>
+
 
 #include "minion_mini_config.h"
 #include "minion_motor_driver.h"
@@ -41,60 +28,6 @@
 #define TEST_RADIAN                      3.14      // 180 degree
 
 
-// Callback function prototypes
-void commandVelocityCallback(const geometry_msgs::Twist& cmd_vel_msg);
-
-ros::Time rosNow(void);
-ros::Time addMicros(ros::Time & t, uint32_t _micros); // deprecated
-
-
-void updateVariable(bool isConnected);
-void updateMotorInfo(int32_t left_tick, int32_t right_tick);
-
-
-/*******************************************************************************
-* ROS NodeHandle
-*******************************************************************************/
-ros::NodeHandle nh;
-ros::Time current_time;
-uint32_t current_offset;
-
-/*******************************************************************************
-* ROS Parameter
-*******************************************************************************/
-char get_prefix[10];
-char* get_tf_prefix = get_prefix;
-
-char imu_frame_id[30];
-char mag_frame_id[30];
-char joint_state_header_frame_id[30];
-
-/*******************************************************************************
-* Subscriber
-*******************************************************************************/
-ros::Subscriber<geometry_msgs::Twist> cmd_vel_sub("cmd_vel", commandVelocityCallback);
-
-
-/*******************************************************************************
-* Publisher
-*******************************************************************************/
-// Bumpers, cliffs, buttons, encoders, battery of Minion
-//turtlebot3_msgs::SensorState sensor_state_msg;
-//ros::Publisher sensor_state_pub("sensor_state", &sensor_state_msg);
-
-
-
-/*******************************************************************************
-* Transform Broadcaster
-*******************************************************************************/
-// TF of Minion
-geometry_msgs::TransformStamped odom_tf;
-tf::TransformBroadcaster tf_broadcaster;
-
-/*******************************************************************************
-* SoftwareTimer of Minion
-*******************************************************************************/
-static uint32_t tTime[10];
 
 
 /*******************************************************************************
@@ -111,13 +44,6 @@ float zero_velocity[WHEEL_NUM] = {0.0, 0.0};
 float goal_velocity[WHEEL_NUM] = {0.0, 0.0};
 float goal_velocity_from_cmd[WHEEL_NUM] = {0.0, 0.0};
 
-
-/*******************************************************************************
-* Calculation for odometry
-*******************************************************************************/
-bool init_encoder = true;
-int32_t last_diff_tick[WHEEL_NUM] = {0, 0};
-double  last_rad[WHEEL_NUM]       = {0.0, 0.0};
 
 /*******************************************************************************
 * Update Joint State

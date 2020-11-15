@@ -30,10 +30,12 @@ bool MinionMotorDriver::init(String minion)
 }
 
 
-bool MinionMotorDriver::moveMotor(Adafruit_DCMotor *motor, int64_t speed_percent)
+bool MinionMotorDriver::moveMotor(Adafruit_DCMotor *motor, int16_t speed_percent)
 {
-  int64_t speed = constrain(abs(speed_percent), 0, 100);
-  speed = speed /100 * MINI_MAX_VELOCITY_MOTOR;
+  int16_t speed = constrain(abs(speed_percent), 0, 100);
+  speed = speed * MINI_MAX_VELOCITY_MOTOR/100 ;
+  Serial.print("speed: ");
+  Serial.println(speed);
   // Positive speeds move wheels forward,
   // negative speeds move wheels backward
   if (speed_percent < 0)
@@ -58,10 +60,15 @@ bool MinionMotorDriver::moveMotor(Adafruit_DCMotor *motor, int64_t speed_percent
 }
 
 
-bool MinionMotorDriver::writeVelocity(int64_t left_value, int64_t right_value)
+bool MinionMotorDriver::writeVelocity(int16_t left_value, int16_t right_value)
 {
-  moveMotor(_left_motor_pointer, left_value);
-  moveMotor(_right_motor_pointer, left_value);
+  Serial.print("left_value: ");
+  Serial.println(left_value);
+  Serial.print("right_value: ");
+  Serial.println(right_value);
+
+  moveMotor(_left_motor_pointer, -left_value);
+  moveMotor(_right_motor_pointer, right_value);
 
   return true;
 }
@@ -77,14 +84,29 @@ bool MinionMotorDriver::controlMotor(const float wheel_separation, float* goal_v
   float lin_vel = goal_velocity[LINEAR];
   float ang_vel = goal_velocity[ANGULAR];
 
+  Serial.print("lin_vel: ");
+  Serial.println(lin_vel);
+
   //  Calculate wheel speeds in m/s without encoder
   float left_speed = lin_vel - (ang_vel * wheel_separation / 2);
   float right_speed = lin_vel + (ang_vel * wheel_separation / 2);
 
+  Serial.print("left_speed: ");
+  Serial.println(left_speed);
+
+  Serial.print("_adafruit_limit_max_velocity: ");
+  Serial.println(_adafruit_limit_max_velocity);
+  
+
   wheel_velocity_cmd[LEFT]   = 100 * left_speed/_adafruit_limit_max_velocity; 
   wheel_velocity_cmd[RIGHT]  = 100 * right_speed/_adafruit_limit_max_velocity;
+  
+  Serial.print("wheel_velocity_cmd LEFT: ");
+  Serial.println(wheel_velocity_cmd[LEFT]);
 
-  comm_result = writeVelocity((int64_t)wheel_velocity_cmd[LEFT], (int64_t)wheel_velocity_cmd[RIGHT]);
+  Serial.print("wheel_velocity_cmd RIGHT: ");
+  Serial.println(wheel_velocity_cmd[RIGHT]);
+  comm_result = writeVelocity((int16_t)wheel_velocity_cmd[LEFT], (int16_t)wheel_velocity_cmd[RIGHT]);
   if (comm_result == false)
     return false;
 

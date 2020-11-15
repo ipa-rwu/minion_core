@@ -43,24 +43,24 @@ class MinionMotorDriver
   void close(void);
   bool setTorque(bool onoff);
   bool getTorque();
-  bool readEncoder(int32_t &left_value, int32_t &right_value);
+  bool readEncoder(int16_t &left_value, int16_t &right_value);
 
-  bool writeVelocity(int64_t left_value, int64_t right_value);
+  bool writeVelocity(int16_t left_value, int16_t right_value);
 
   bool controlMotor(const float wheel_separation, float* value);
 
-  bool moveMotor(Adafruit_DCMotor *motor, int64_t speed_percent);
-
+  bool moveMotor(Adafruit_DCMotor *motor, int16_t speed_percent);
+  Adafruit_DCMotor *_left_motor_pointer;
+  Adafruit_DCMotor *_right_motor_pointer;
 
  private:
   uint8_t left_wheel_id_;
   uint8_t right_wheel_id_;
-  Adafruit_DCMotor *_left_motor_pointer;
-  Adafruit_DCMotor *_right_motor_pointer;
+
 
   bool torque_;
   Adafruit_MotorShield _AFMS;
-  uint16_t _adafruit_limit_max_velocity;
+  float _adafruit_limit_max_velocity;
 };
 
 #endif // MINION_MOTOR_DRIVER_H_
