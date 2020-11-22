@@ -8,8 +8,13 @@
 // #include <Servo.h>
 #include <Wire.h>
 
-#define CONTROL_MOTOR_SPEED_FREQUENCY          30   //hz
-#define CONTROL_MOTOR_TIMEOUT                  500  //ms
+#include <ros.h>
+#include <geometry_msgs/Twist.h>
+#include <tf/tf.h>
+#include <tf/transform_broadcaster.h>
+
+#define CONTROL_MOTOR_SPEED_FREQUENCY          100   //hz 30
+#define CONTROL_MOTOR_TIMEOUT                  500  //ms 500
 #define IMU_PUBLISH_FREQUENCY                  200  //hz
 #define CMD_VEL_PUBLISH_FREQUENCY              30   //hz
 #define DRIVE_INFORMATION_PUBLISH_FREQUENCY    30   //hz
@@ -49,5 +54,45 @@ float goal_velocity_from_cmd[WHEEL_NUM] = {0.0, 0.0};
 * Update Joint State
 *******************************************************************************/
 double  last_velocity[WHEEL_NUM]  = {0.0, 0.0};
+
+// Callback function prototypes
+void commandVelocityCallback(const geometry_msgs::Twist& cmd_vel_msg);
+
+
+/*******************************************************************************
+* ROS NodeHandle
+*******************************************************************************/
+ros::NodeHandle nh;
+ros::Time current_time;
+uint32_t current_offset;
+
+/*******************************************************************************
+* ROS Parameter
+*******************************************************************************/
+char get_prefix[10];
+char* get_tf_prefix = get_prefix;
+
+char imu_frame_id[30];
+char mag_frame_id[30];
+
+char joint_state_header_frame_id[30];
+
+
+/*******************************************************************************
+* Subscriber
+*******************************************************************************/
+ros::Subscriber<geometry_msgs::Twist> cmd_vel_sub("cmd_vel", commandVelocityCallback);
+
+
+/*******************************************************************************
+* Transform Broadcaster
+*******************************************************************************/
+// TF of Turtlebot3
+tf::TransformBroadcaster tf_broadcaster;
+
+/*******************************************************************************
+* SoftwareTimer of Turtlebot3
+*******************************************************************************/
+static uint32_t tTime[10];
 
 #endif // MINION_CORE_CONFIG_H_

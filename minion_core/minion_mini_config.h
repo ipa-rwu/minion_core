@@ -5,7 +5,7 @@
 #define NAME                             "mini"
 
 #define WHEEL_RADIUS                     0.0325           // meter
-#define WHEEL_SEPARATION                 0.130           // meter 
+#define WHEEL_SEPARATION                 1.30           // meter 
 #define TURNING_RADIUS                   0.075           // meter 
 #define ROBOT_RADIUS                     0.209           // meter (BURGER : 0.105, WAFFLE : 0.220)
 

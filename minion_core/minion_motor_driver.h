@@ -4,7 +4,7 @@
 #include <Adafruit_MotorShield.h>
 
 // Limit values (XM430-W210-T and XM430-W350-T)
-#define MINI_MAX_VELOCITY            0.5 
+#define MINI_MAX_VELOCITY            1.5 
 #define MINI_MAX_VELOCITY_MOTOR            255  
 
 

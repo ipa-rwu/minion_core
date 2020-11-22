@@ -2,6 +2,7 @@
 
 #include "minion_core_config.h"
 
+
 void setup() {
   Serial.begin(57600);
 
@@ -12,8 +13,15 @@ void setup() {
   nh.subscribe(cmd_vel_sub);
 
   motor_driver.init(NAME);
-  tf_broadcaster.init(nh);
+  // tf_broadcaster.init(nh);
 
+  goal_velocity[LINEAR]  = 0;
+  goal_velocity[ANGULAR] = 0;
+  motor_driver.controlMotor(WHEEL_SEPARATION, goal_velocity);  
+
+  memset(tTime,0,sizeof(tTime));
+  //tTime[6] = millis();
+  //tTime[0] = millis();
     
 }
 
@@ -23,21 +31,25 @@ void loop() {
   updateTime();
   updateTFPrefix(nh.connected());
 
-  if ((t-tTime[0]) >= (1000 / CONTROL_MOTOR_SPEED_FREQUENCY))
-  {
+  // updateGoalVelocity();
+  // motor_driver.controlMotor(WHEEL_SEPARATION, goal_velocity);
+
+  // if ((t-tTime[0]) >= (1000 / CONTROL_MOTOR_SPEED_FREQUENCY))
+  // {
     updateGoalVelocity();
     // tTime[6] the time when get cmd_vel
     if ((t-tTime[6]) > CONTROL_MOTOR_TIMEOUT) 
     {
       motor_driver.controlMotor(WHEEL_SEPARATION, zero_velocity);
     } 
-    else {
+    else 
+    {
       motor_driver.controlMotor(WHEEL_SEPARATION, goal_velocity);
     }
     // tTime[0] the time when update motor_driver
-    tTime[0] = t;
+    // tTime[0] = t;
 
-  }
+  // }
 
   if ((t-tTime[3]) >= (1000 / IMU_PUBLISH_FREQUENCY))
   {
@@ -50,6 +62,8 @@ void loop() {
   
   // Call all the callbacks waiting to be called at that point in time
   nh.spinOnce();
+  // delay(10);
+
 }
 
 
@@ -103,6 +117,8 @@ void updateGoalVelocity(void)
 {
   goal_velocity[LINEAR]  = goal_velocity_from_cmd[LINEAR] ;
   goal_velocity[ANGULAR] = goal_velocity_from_cmd[ANGULAR];
+  // motor_driver.controlMotor(WHEEL_SEPARATION, goal_velocity);  
+
 }
 
 

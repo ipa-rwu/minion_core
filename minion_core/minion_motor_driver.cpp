@@ -86,16 +86,22 @@ bool MinionMotorDriver::controlMotor(const float wheel_separation, float* goal_v
 
   Serial.print("lin_vel: ");
   Serial.println(lin_vel);
-
+  
   //  Calculate wheel speeds in m/s without encoder
   float left_speed = lin_vel - (ang_vel * wheel_separation / 2);
   float right_speed = lin_vel + (ang_vel * wheel_separation / 2);
 
+  if (lin_vel == 0 && ang_vel != 0)
+  {
+    float left_speed = 0.2 - (ang_vel * wheel_separation / 2);
+    float right_speed = 0.2 + (ang_vel * wheel_separation / 2); 
+  }
+
   Serial.print("left_speed: ");
   Serial.println(left_speed);
 
-  Serial.print("_adafruit_limit_max_velocity: ");
-  Serial.println(_adafruit_limit_max_velocity);
+  // Serial.print("_adafruit_limit_max_velocity: ");
+  // Serial.println(_adafruit_limit_max_velocity);
   
 
   wheel_velocity_cmd[LEFT]   = 100 * left_speed/_adafruit_limit_max_velocity; 
